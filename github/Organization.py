@@ -766,11 +766,13 @@ class Organization(github.GithubObject.CompletableGithubObject):
         :calls: `GET /orgs/:org/teams <http://developer.github.com/v3/orgs/teams>`_
         :rtype: :class:`github.PaginatedList.PaginatedList` of :class:`github.Team.Team`
         """
+        child_header = {"Accept": "application/vnd.github.hellcat-preview"}
         return github.PaginatedList.PaginatedList(
             github.Team.Team,
             self._requester,
             self.url + "/teams",
-            None
+            None,
+            headers=child_header
         )
 
     def has_in_members(self, member):

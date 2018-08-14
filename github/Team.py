@@ -148,6 +148,14 @@ class Team(github.GithubObject.CompletableGithubObject):
         self._completeIfNotSet(self._privacy)
         return self._privacy.value
 
+    @property
+    def parent(self):
+        """
+        :type: :class:`github.Team.Team`
+        """
+        self._completeIfNotSet(self._parent)
+        return self._parent.value
+
     def add_to_members(self, member):
         """
         This API call is deprecated. Use `add_membership` instead.
@@ -286,6 +294,21 @@ class Team(github.GithubObject.CompletableGithubObject):
             None
         )
 
+    def get_child_teams(self):
+        """
+        :calls: `GET /teams/:id/teams <https://developer.github.com/v3/teams/#list-child-teams>`
+        :rtype: :class:`github.PaginatedList.PaginatedList` of :class:`github.Team.Team`
+        """
+        child_header = {"Accept": "application/vnd.github.hellcat-preview"}
+        return github.PaginatedList.PaginatedList(
+            github.Team.Team,
+            self._requester,
+            self.url + "/teams",
+            None,
+            headers=child_header
+        )
+        
+
     def has_in_members(self, member):
         """
         :calls: `GET /teams/:id/members/:user <http://developer.github.com/v3/orgs/teams>`_
@@ -367,6 +390,7 @@ class Team(github.GithubObject.CompletableGithubObject):
         self._slug = github.GithubObject.NotSet
         self._url = github.GithubObject.NotSet
         self._organization = github.GithubObject.NotSet
+        self._parent = github.GithubObject.NotSet
         self._privacy = github.GithubObject.NotSet
 
     def _useAttributes(self, attributes):
@@ -392,5 +416,7 @@ class Team(github.GithubObject.CompletableGithubObject):
             self._url = self._makeStringAttribute(attributes["url"])
         if "organization" in attributes:  # pragma no branch
             self._organization = self._makeClassAttribute(github.Organization.Organization, attributes["organization"])
+        if "parent" in attributes:  # pragma no branch
+            self._parent = self._makeClassAttribute(github.Team.Team, attributes["parent"])
         if "privacy" in attributes:  # pragma no branch
             self._privacy = self._makeStringAttribute(attributes["privacy"])
