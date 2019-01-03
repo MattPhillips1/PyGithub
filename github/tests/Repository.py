@@ -473,6 +473,10 @@ class Repository(Framework.TestCase):
         pull = self.repo.create_pull("Pull request created by PyGithub", "Body of the pull request", "topic/RewriteWithGeneratedCode", "BeaverSoftware:master", True)
         self.assertEqual(pull.id, 1436215)
 
+    def testCreateProject(self):
+        project = self.repo.create_project("Project created by PyGithub", "Body of the project")
+        self.assertEqual(project.id, 2013820)
+
     def testCreatePullFromIssue(self):
         issue = self.repo.get_issue(32)
         pull = self.repo.create_pull(issue, "topic/RewriteWithGeneratedCode", "BeaverSoftware:master")
@@ -500,6 +504,10 @@ class Repository(Framework.TestCase):
         self.assertListKeyEqual(issues[0].labels, lambda l: l.name, ["Functionalities", "RequestedByUser"])
         self.assertEqual(issues[0].state, "open")
 
+    def testMarkNotificationsAsRead(self):
+        repo = self.g.get_user().get_repo("PyGithub")
+        repo.mark_notifications_as_read(datetime.datetime(2018, 10, 18, 18, 19, 43, 0))
+
     def testAssignees(self):
         lyloa = self.g.get_user("Lyloa")
         jacquev6 = self.g.get_user("jacquev6")
@@ -513,20 +521,20 @@ class Repository(Framework.TestCase):
 
     def testGetContents(self):
         self.assertEqual(len(self.repo.get_readme().content), 10212)
-        self.assertEqual(len(self.repo.get_contents("/doc/ReferenceOfClasses.md").content), 38121)
+        self.assertEqual(len(self.repo.get_contents("doc/ReferenceOfClasses.md").content), 38121)
 
     def testGetContentDir(self):
 
-        contents = self.repo.get_contents("/")
+        contents = self.repo.get_contents("")
         self.assertTrue(isinstance(contents, list))
         self.assertEquals(len(contents), 14)
 
     def testGetContentsWithRef(self):
         self.assertEqual(len(self.repo.get_readme(ref="refs/heads/topic/ExperimentOnDocumentation").content), 6747)
-        self.assertEqual(len(self.repo.get_contents("/doc/ReferenceOfClasses.md", ref="refs/heads/topic/ExperimentOnDocumentation").content), 43929)
+        self.assertEqual(len(self.repo.get_contents("doc/ReferenceOfClasses.md", ref="refs/heads/topic/ExperimentOnDocumentation").content), 43929)
 
     def testCreateFile(self):
-        newFile = '/doc/testCreateUpdateDeleteFile.md'
+        newFile = 'doc/testCreateUpdateDeleteFile.md'
         content = 'Hello world'
         self.repo.create_file(
             path=newFile, message='Create file for testCreateFile', content=content,
@@ -534,7 +542,7 @@ class Repository(Framework.TestCase):
             author=github.InputGitAuthor("Enix Yu", "enix223@163.com", "2016-01-15T16:13:30+12:00"))
 
     def testUpdateFile(self):
-        updateFile = '/doc/testCreateUpdateDeleteFile.md'
+        updateFile = 'doc/testCreateUpdateDeleteFile.md'
         content = 'Hello World'
         sha = self.repo.get_contents(updateFile).sha
         self.repo.update_file(
@@ -543,7 +551,7 @@ class Repository(Framework.TestCase):
             author=github.InputGitAuthor("Enix Yu", "enix223@163.com", "2016-01-15T16:13:30+12:00"))
 
     def testDeleteFile(self):
-        deleteFile = '/doc/testCreateUpdateDeleteFile.md'
+        deleteFile = 'doc/testCreateUpdateDeleteFile.md'
         sha = self.repo.get_contents(deleteFile).sha
         self.repo.delete_file(path=deleteFile, message='Delete file for testDeleteFile', sha=sha, branch="master")
 
@@ -641,6 +649,11 @@ class Repository(Framework.TestCase):
 
     def testReplaceTopics(self):
         self.repo.replace_topics(['github', 'testing'])
+
+    def testGetRepositoryWith301Redirect(self):
+        repo = self.g.get_repo("protoncoin/protoncoin")
+        self.assertEqual(repo.full_name, 'padima2/protoncoin')
+
 
 class LazyRepository(Framework.TestCase):
 

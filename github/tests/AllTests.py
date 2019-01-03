@@ -20,6 +20,7 @@
 # Copyright 2018 Steve Kowalik <steven@wedontsleep.org>                        #
 # Copyright 2018 Wan Liuyang <tsfdye@gmail.com>                                #
 # Copyright 2018 sfdye <tsfdye@gmail.com>                                      #
+# Copyright 2018 Vinay Hegde <vinayhegde2010@gmail.com>
 #                                                                              #
 # This file is part of PyGithub.                                               #
 # http://pygithub.readthedocs.io/                                              #
@@ -71,6 +72,7 @@ from Label import *
 from Milestone import *
 from NamedUser import *
 from Markdown import *
+from Notification import *
 from OrganizationHasInMembers import *
 from Organization import *
 from Project import *
@@ -87,7 +89,9 @@ from SourceImport import *
 from Status import *
 from Tag import *
 from Team import *
+from Traffic import *
 from UserKey import *
+from Migration import *
 
 from PaginatedList import *
 from Exceptions import *
@@ -120,3 +124,5 @@ from Issue216 import *
 from Issue278 import *
 from Issue494 import *
 from Issue572 import *
+from Issue937 import *
+from Issue945 import *

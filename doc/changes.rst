@@ -4,6 +4,50 @@ Change log
 Stable versions
 ~~~~~~~~~~~~~~~
 
+Version 1.43.4 (December 21, 2018)
+-----------------------------------
+
+**New features**
+
+* Add Migration API (#899) (b4d895ed)
+* Add Traffic API (#977) (a433a2fe)
+* New in Project API: create repository project, create project column (#995) (1c0fd97d)
+
+**Bug Fixes & Improvements**
+
+* Change type of GitRelease.author to NamedUser (#969) (aca50a75)
+* Use total_count from data in PaginatedList (#963) (ec177610)
+
+Version 1.43.3 (October 31, 2018)
+-----------------------------------
+
+**New features**
+
+* Add support for JWT authentication (#948) (8ccf9a94)
+* Added support for required signatures on protected branches (#939) (8ee75a28)
+* Ability to filter repository collaborators (#938) (5687226b)
+* Mark notification as read (#932) (0a10d7cd)
+* Add highlight search to ``search_code`` function (#925) (1fa25670)
+* Adding ``suspended_at`` property to NamedUSer (#922) (c13b43ea)
+* Add since parameter for Gists (#914) (e18b1078)
+
+**Bug Fixes & Improvements**
+
+* Fix missing parameters when reversing ``PaginatedList`` (#946) (60a684c5)
+* Fix unable to trigger ``RateLimitExceededException``. (#943) (972446d5)
+* Fix inconsistent behavior of trailing slash usage in file path (#931) (ee9f098d)
+* Fix handling of 301 redirects (#916) (6833245d)
+* Fix missing attributes of ``get_repos`` for authenticated users (#915) (c411196f)
+* Fix ``Repository.edit`` (#904) (7286eec0)
+* Improve ``__repr__`` method of Milestone class (#921) (562908cb)
+* Fix rate limit documentation change (#902) (974d1ec5)
+* Fix comments not posted in create_review() (#909) (a18eeb3a)
+
+Version 1.43.2 (September 12, 2018)
+-----------------------------------
+
+* Restore ``RateLimit.rate`` attribute, raise deprecation warning instead (d92389be)
+
 Version 1.43.1 (September 11, 2018)
 -----------------------------------
 
@@ -27,6 +71,9 @@ Version 1.43 (September 08, 2018)
 * Add support for required approving review count (#888) (ef16702)
 * Add ``Organization.invite_user`` (880)(eb80564)
 * Add support for search/graphql rate limit (fd8a036)
+
+  + Deprecated ``RateLimit.rate``
+  + Add `RateLimit.core <https://pygithub.readthedocs.io/en/latest/github_objects/RateLimit.html#github.RateLimit.RateLimit.core>`__, `RateLimit.search <https://pygithub.readthedocs.io/en/latest/github_objects/RateLimit.html#github.RateLimit.RateLimit.search>`__ and `RateLimit.graphql <https://pygithub.readthedocs.io/en/latest/github_objects/RateLimit.html#github.RateLimit.RateLimit.graphql>`__
 * Add Support search by topics (#893) (3ce0418)
 * Branch Protection API overhaul (#790) (171cc567)
 

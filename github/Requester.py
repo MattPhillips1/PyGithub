@@ -220,7 +220,7 @@ class Requester:
 
     #############################################################
 
-    def __init__(self, login_or_token, password, base_url, timeout, client_id, client_secret, user_agent, per_page, api_preview, verify):
+    def __init__(self, login_or_token, password, jwt, base_url, timeout, client_id, client_secret, user_agent, per_page, api_preview, verify):
         self._initializeDebugFeature()
 
         if password is not None:
@@ -232,6 +232,8 @@ class Requester:
         elif login_or_token is not None:
             token = login_or_token
             self.__authorizationHeader = "token " + token
+        elif jwt is not None:
+            self.__authorizationHeader = "Bearer " + jwt
         else:
             self.__authorizationHeader = None
 
@@ -300,7 +302,10 @@ class Requester:
             cls = GithubException.TwoFactorException  # pragma no cover (Should be covered)
         elif status == 403 and output.get("message").startswith("Missing or invalid User Agent string"):
             cls = GithubException.BadUserAgentException
-        elif status == 403 and output.get("message").lower().startswith("api rate limit exceeded"):
+        elif status == 403 and (
+            output.get("message").lower().startswith("api rate limit exceeded")
+            or output.get("message").lower().endswith("please wait a few minutes before you try again.")
+        ):
             cls = GithubException.RateLimitExceededException
         elif status == 404 and output.get("message") == "Not Found":
             cls = GithubException.UnknownObjectException
@@ -390,8 +395,8 @@ class Requester:
         if Consts.headerRateReset in responseHeaders:
             self.rate_limiting_resettime = int(responseHeaders[Consts.headerRateReset])
 
-        if "x-oauth-scopes" in responseHeaders:
-            self.oauth_scopes = responseHeaders["x-oauth-scopes"].split(", ")
+        if Consts.headerOAuthScopes in responseHeaders:
+            self.oauth_scopes = responseHeaders[Consts.headerOAuthScopes].split(", ")
 
         self.DEBUG_ON_RESPONSE(status, responseHeaders, output)
 
@@ -434,7 +439,8 @@ class Requester:
             return self.__requestRaw(original_cnx, verb, url, requestHeaders, input)
 
         if status == 301 and 'location' in responseHeaders:
-            return self.__requestRaw(original_cnx, verb, responseHeaders['location'], requestHeaders, input)
+            o = urlparse.urlparse(responseHeaders['location'])
+            return self.__requestRaw(original_cnx, verb, o.path, requestHeaders, input)
 
         return status, responseHeaders, output
 
@@ -488,6 +494,8 @@ class Requester:
                     requestHeaders["Authorization"] = "Basic (login and password removed)"
                 elif requestHeaders["Authorization"].startswith("token"):
                     requestHeaders["Authorization"] = "token (oauth token removed)"
+                elif requestHeaders["Authorization"].startswith("Bearer"):
+                    requestHeaders["Authorization"] = "Bearer (jwt removed)"
                 else:  # pragma no cover (Cannot happen, but could if we add an authentication method => be prepared)
                     requestHeaders["Authorization"] = "(unknown auth removed)"  # pragma no cover (Cannot happen, but could if we add an authentication method => be prepared)
             logger.debug("%s %s://%s%s %s %s ==> %i %s %s", str(verb), self.__scheme, self.__hostname, str(url), str(requestHeaders), str(input), status, str(responseHeaders), str(output))
