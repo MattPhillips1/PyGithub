@@ -56,7 +56,7 @@ import sys
 import requests
 import jwt
 
-from Requester import Requester, json
+from Requester import Requester
 import RequesterCache
 import AuthenticatedUser
 import NamedUser
@@ -776,40 +776,37 @@ class GithubIntegration(object):
         :param installation_id: int
         :return: :class:`github.InstallationAuthorization.InstallationAuthorization`
         """
-        body = None
+        body = {}
         if user_id:
-            body = json.dumps({"user_id": user_id})
-        response = requests.post("https://api.github.com/installations/{}/access_tokens".format(installation_id),
-                                 headers={
-                                     "Authorization": "Bearer {}".format(self.create_jwt()),
-                                     "Accept": Consts.mediaTypeIntegrationPreview,
-                                     "User-Agent": "PyGithub/Python"
-                                 },
-                                 body=body)
-        response_text = response.text
-
-        if atLeastPython3:
-            response_text = response_text.decode('utf-8')
+            body = {"user_id": user_id}
+        response = requests.post(
+            "https://api.github.com/installations/{}/access_tokens".format(installation_id),
+            headers={
+                "Authorization": "Bearer {}".format(self.create_jwt()),
+                "Accept": Consts.mediaTypeIntegrationPreview,
+                "User-Agent": "PyGithub/Python"
+            },
+            json=body
+        )
 
         if response.status_code == 201:
-            data = json.loads(response_text)
             return InstallationAuthorization.InstallationAuthorization(
                 requester=None,  # not required, this is a NonCompletableGithubObject
                 headers={},  # not required, this is a NonCompletableGithubObject
-                attributes=data,
+                attributes=response.json(),
                 completed=True
             )
         elif response.status_code == 403:
             raise GithubException.BadCredentialsException(
                 status=response.status_code,
-                data=response_text
+                data=response.text
             )
         elif response.status_code == 404:
             raise GithubException.UnknownObjectException(
                 status=response.status_code,
-                data=response_text
+                data=response.text
             )
         raise GithubException.GithubException(
             status=response.status_code,
-            data=response_text
+            data=response.text
         )
