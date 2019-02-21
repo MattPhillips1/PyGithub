@@ -174,7 +174,7 @@ class Requester:
         cls.__fetch_cache = cache()
 
     @classmethod
-    def setCachePolicy(cls):
+    def getCachePolicy(cls):
         print(cls.__fetch_cache)
         return cls.__fetch_cache
 
