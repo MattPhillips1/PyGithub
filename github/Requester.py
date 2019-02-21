@@ -175,7 +175,6 @@ class Requester:
 
     @classmethod
     def getCachePolicy(cls):
-        print(cls.__fetch_cache)
         return cls.__fetch_cache
 
     DEBUG_FLAG = False
@@ -407,7 +406,6 @@ class Requester:
 
 
         if self.__fetch_cache is not None and verb == 'GET':
-            print(url)
             if status == 304:  # "Unmodified" response
                 output = cached.response
                 new_headers = cached.headers
