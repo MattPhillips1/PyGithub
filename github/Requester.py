@@ -384,6 +384,7 @@ class Requester:
         cached = None
         if self.__fetch_cache is not None and verb == 'GET':
             cached = self.__fetch_cache.lookup(url)
+            print(url)
             if cached is not None:
                 requestHeaders["If-None-Match"] = cached.etag
 
