@@ -171,7 +171,7 @@ class Requester:
 
     @classmethod
     def setCachePolicy(cls, cache):
-        cls.__fetch_cache = cache
+        cls.__fetch_cache = cache()
 
     DEBUG_FLAG = False
 
