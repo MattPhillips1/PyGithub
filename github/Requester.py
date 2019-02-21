@@ -173,6 +173,11 @@ class Requester:
     def setCachePolicy(cls, cache):
         cls.__fetch_cache = cache()
 
+    @classmethod
+    def setCachePolicy(cls):
+        print(cls.__fetch_cache)
+        return cls.__fetch_cache
+
     DEBUG_FLAG = False
 
     DEBUG_FRAME_BUFFER_SIZE = 1024
